@@ -7,7 +7,7 @@
 
 **Research Gap Table Crafter** is a powerful, AI-driven agent designed to streamline the literature review process for researchers, students, and academics. By leveraging Google's **Gemini 2.5 Flash** models, it automatically analyzes research papers (PDF/DOCX) and generates comprehensive "Research Gap Tables," identifying key findings, methodologies, and critical gaps in existing literature.
 
-🔗 **Live Demo:** [https://researchgaptablecrafter.streamlit.app/](Live Demo)
+🔗 **Live Demo:** [Live Demo](https://researchgaptablecrafter.streamlit.app)
 
 ---
 
