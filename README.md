@@ -2,6 +2,8 @@
 
 A modern AI-powered agent to analyze research papers, identify research gaps, and answer questions.
 
+🔗 **Live Demo:** [https://researchgaptablecrafter.streamlit.app/](https://researchgaptablecrafter.streamlit.app/)
+
 ## Features
 - **Upload Multiple Files**: Supports PDF and DOCX formats.
 - **Research Gap Table**: Automatically generates a structured table of findings, methodologies, and gaps.
