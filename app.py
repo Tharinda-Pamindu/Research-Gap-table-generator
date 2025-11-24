@@ -153,10 +153,16 @@ def main():
         if uploaded_files:
             st.success(f"{len(uploaded_files)} files uploaded.")
             
+        st.divider()
+        st.header("Mode Selection")
+        mode = st.radio("Select Operation", ["Gap Table Generator", "Literature Review Generator"])
+            
     # Main Content
     if uploaded_files and api_key:
         if 'processed_data' not in st.session_state:
             st.session_state.processed_data = None
+        if 'literature_review' not in st.session_state:
+            st.session_state.literature_review = None
             
         # Process Button
         if st.button("Analyze Papers"):
@@ -164,13 +170,19 @@ def main():
                 text, filenames = utils.extract_text_from_files(uploaded_files)
                 st.session_state.extracted_text = text
                 
-                # Generate Table
-                df = utils.generate_research_gap_table(text, api_key)
-                st.session_state.processed_data = df
+                if mode == "Gap Table Generator":
+                    # Generate Table
+                    df = utils.generate_research_gap_table(text, api_key)
+                    st.session_state.processed_data = df
+                else:
+                    # Generate Literature Review
+                    review = utils.generate_literature_review(text, api_key)
+                    st.session_state.literature_review = review
+                    
                 st.success("Analysis Complete!")
 
         # Display Results
-        if st.session_state.processed_data is not None:
+        if mode == "Gap Table Generator" and st.session_state.processed_data is not None:
             st.subheader("🔍 Research Gap Analysis Table")
             
             # View Toggle using Tabs (prevents rerun)
@@ -204,7 +216,22 @@ def main():
                     file_name="research_gap_analysis.docx",
                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 )
+        
+        elif mode == "Literature Review Generator" and st.session_state.literature_review is not None:
+            st.subheader("📝 Literature Review")
+            st.markdown(st.session_state.literature_review)
             
+            # Download Options
+            docx_data = utils.create_review_docx(st.session_state.literature_review)
+            st.download_button(
+                label="Download as DOCX",
+                data=docx_data,
+                file_name="literature_review.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
+            
+        if (mode == "Gap Table Generator" and st.session_state.processed_data is not None) or \
+           (mode == "Literature Review Generator" and st.session_state.literature_review is not None):
             st.divider()
             
             # Q&A Section

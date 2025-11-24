@@ -239,3 +239,43 @@ def create_docx_download(df):
     doc.save(buffer)
     buffer.seek(0)
     return buffer
+
+def generate_literature_review(text, api_key):
+    """
+    Generates a literature review from the provided text using Gemini.
+    """
+    prompt = """
+    You are an expert academic researcher. Write a comprehensive literature review based on the provided text from multiple research papers.
+    
+    Structure the review as follows:
+    1.  **Introduction**: Briefly introduce the key themes and topics covered in the papers.
+    2.  **Thematic Analysis**: Group the findings by common themes, methodologies, or debates. Compare and contrast the different studies.
+    3.  **Critical Evaluation**: Discuss the strengths and weaknesses of the approaches used.
+    4.  **Conclusion**: Summarize the state of the field and highlight any consensus or remaining gaps.
+    5.  **References**: List the references in IEEE format corresponding to the citations used in the text.
+    
+    IMPORTANT:
+    - Write in a formal, academic tone.
+    - **Use IEEE Citation Style**: Use numeric citations in square brackets (e.g., [1], [2]) within the text.
+    - Extract author names and titles from the text to create the References list.
+    - Ensure the review is coherent and flows logically.
+    """
+    
+    return get_gemini_response(prompt, text, api_key)
+
+def create_review_docx(review_text):
+    """
+    Creates a DOCX file for the literature review.
+    """
+    doc = docx.Document()
+    doc.add_heading('Literature Review', 0)
+    
+    # Split text by double newlines to create paragraphs
+    paragraphs = review_text.split('\n\n')
+    for para in paragraphs:
+        doc.add_paragraph(para.strip())
+            
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
