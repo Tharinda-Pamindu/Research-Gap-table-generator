@@ -21,11 +21,11 @@
     *   Research Gaps / Limitations
     *   Relevance to Project
 *   **💬 Interactive Q&A**: Chat with your documents! Ask specific questions about the uploaded papers and get context-aware answers.
-*   **📥 Versatile Exports**:
-    *   **PDF & DOCX**: Download the generated gap table for your reports.
-    *   **Markdown**: Export conversation history for sharing.
-    *   **JSON**: Save and load your chat sessions to resume work later.
-*   **🎨 Modern UI**: A sleek, dark-themed interface built for focus and readability.
+*   **� Secure Configuration**: "Login-style" API key configuration ensures your key is stored securely in the session.
+*   **💾 Chat Persistence**:
+    *   **Save & Resume**: Download your conversation as JSON and restore it anytime.
+    *   **Share**: Export chat history as Markdown or copy directly to clipboard.
+*   **🎨 Modern Dark UI**: A sleek, dark-themed interface designed for focus and readability (Dark Mode by default).
 
 ---
 
