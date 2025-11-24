@@ -100,6 +100,27 @@ streamlit run app.py
 
 ---
 
+## 📅 Release History
+
+### [v1.2.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/v1.2.0) (Current) - Literature Review & Dual Mode
+*   **Literature Review Generator**: Added a new mode to synthesize multiple papers into a coherent, academic literature review.
+*   **IEEE Citations**: Standardized citation format (numeric [1], [2]) with an automatic References section.
+*   **Dual Mode Persistence**: Seamlessly switch between "Gap Table" and "Literature Review" modes without losing generated data.
+*   **DOCX Export**: Added support for downloading literature reviews as DOCX files.
+
+### [v1.1.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/v1.1.0) - UI/UX Polish & Stability
+*   **Dark Mode Default**: Enforced a sleek, professional dark theme for better readability.
+*   **PDF Export Fix**: Resolved layout issues by implementing **A3 Landscape** support and dynamic column sizing for wide tables.
+*   **Chat Persistence**: Added functionality to Save/Load conversation history (JSON) and export as Markdown.
+*   **Secure API Config**: Implemented a secure, session-based API key input flow.
+
+### [v1.0.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/v1.0.0) - Initial Release
+*   **Core Analysis**: Support for uploading PDF/DOCX files and generating Research Gap Tables.
+*   **Q&A Interface**: Basic chat functionality to ask questions about documents.
+*   **Export**: Initial support for downloading gap tables as PDF and DOCX.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
