@@ -119,7 +119,7 @@ No breaking changes. Simply pull the latest code and restart the application. Yo
 
 ### v1.0
 *   Streamlit deprecation warning for `use_container_width` parameter (will be addressed in future release).
-*   PDF export may fail with very wide tables (9+ columns) - **Fixed in v1.1.0**.
+*   PDF export may fail with very wide tables (9+ columns).
 
 ---
 
