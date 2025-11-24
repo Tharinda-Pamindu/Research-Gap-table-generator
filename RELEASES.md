@@ -4,7 +4,7 @@ This document contains detailed release notes for all versions of the Research G
 
 ---
 
-## [v1.2.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/v1.2.0) - Literature Review & Dual Mode
+## [v2.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/V2.0) - Literature Review & Dual Mode
 **Release Date:** November 25, 2025
 
 ### 🎉 New Features
@@ -30,8 +30,8 @@ This document contains detailed release notes for all versions of the Research G
 
 ---
 
-## [v1.1.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/v1.1.0) - UI/UX Polish & Stability
-**Release Date:** November 24, 2025
+## [v1.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/V1.0) - Initial Release
+**Release Date:** November 23, 2025
 
 ### 🎨 UI/UX Enhancements
 *   **Dark Mode Default**: Enforced a sleek, professional dark theme by default.
@@ -60,11 +60,6 @@ This document contains detailed release notes for all versions of the Research G
 *   Fixed `NameError` in PDF generation by restoring buffer initialization.
 *   Improved HTML tag handling in PDF exports (replaced `<br>` with `<br/>`).
 *   Added fallback text sanitization for robust error handling.
-
----
-
-## [v1.0.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/v1.0.0) - Initial Release
-**Release Date:** November 23, 2025
 
 ### 🚀 Core Features
 *   **Multi-Format Document Upload**:
@@ -112,36 +107,31 @@ This document contains detailed release notes for all versions of the Research G
 
 ## Upgrade Guide
 
-### From v1.1.0 to v1.2.0
+### From v1.0 to v2.0
 No breaking changes. Simply pull the latest code and restart the application. Your existing API key configuration will be preserved in the session.
-
-### From v1.0.0 to v1.1.0
-No breaking changes. The dark mode is now enforced by default. If you had custom theme configurations, they will be overridden.
 
 ---
 
 ## Known Issues
 
-### v1.2.0
+### v2.0
 *   None reported.
 
-### v1.1.0
+### v1.0
 *   Streamlit deprecation warning for `use_container_width` parameter (will be addressed in future release).
-
-### v1.0.0
 *   PDF export may fail with very wide tables (9+ columns) - **Fixed in v1.1.0**.
 
 ---
 
 ## Future Roadmap
 
-*   **v1.3.0** (Planned):
+*   **v1.1** (Planned):
     *   Support for additional citation formats (APA, MLA, Chicago).
     *   Enhanced literature review customization options.
     *   PDF export for literature reviews.
     *   Improved table column width optimization.
 
-*   **v2.0.0** (Planned):
+*   **v2.1** (Planned):
     *   Multi-language support.
     *   Cloud storage integration for saving projects.
     *   Collaborative features for team research.

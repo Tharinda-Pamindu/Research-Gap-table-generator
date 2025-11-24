@@ -102,14 +102,13 @@ streamlit run app.py
 
 ## 📅 Release History
 
-**Current Version:** [v1.2.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/v1.2.0) - Literature Review & Dual Mode
+**Current Version:** [v2.0](https://github.com/Tharinda-Pamindu/Research-Gap-table-generator/releases/tag/V2.0) - Literature Review & Dual Mode
 
-For detailed release notes, changelog, and upgrade guides, see **[RELEASES.md](RELEASES.md)**.
+For detailed release notes, changelog, and upgrade guides, see **[RELEASES](RELEASES.md)**.
 
 ### Quick Overview
-*   **v1.2.0** - Literature Review Generator, IEEE Citations, Dual Mode Persistence
-*   **v1.1.0** - Dark Mode, PDF Export Fix, Chat Persistence
-*   **v1.0.0** - Initial Release with Gap Table Generation
+*   **v2.0** - Literature Review Generator, IEEE Citations, Dual Mode Persistence
+*   **v1.0** - Initial Release with Gap Table Generation, Dark Mode, PDF Export Fix, Chat Persistence
 
 ---
 
