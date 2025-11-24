@@ -32,7 +32,7 @@
 ## 🛠️ Tech Stack
 
 *   **Frontend**: [Streamlit](https://streamlit.io/)
-*   **AI Model**: [Google Gemini 1.5 Flash](https://ai.google.dev/)
+*   **AI Model**: [Google Gemini 2.5 Flash](https://ai.google.dev/)
 *   **Data Processing**: Pandas, PyPDF2, python-docx
 *   **Report Generation**: ReportLab (PDF), Tabulate
 
