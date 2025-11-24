@@ -159,11 +159,15 @@ def create_pdf_download(df):
         for item in row:
             # Clean text for ReportLab Paragraph
             text = str(item)
+            
+            # Truncate text if it's too long to prevent LayoutError
+            # A3 height is ~840 pts. If a cell is > 800 pts, it crashes.
+            # 1000 chars is a safe upper limit for 8pt font in a narrow column.
+            if len(text) > 1000:
+                text = text[:1000] + "... (truncated)"
+            
             # Replace <br> with <br/> for ReportLab
             text = text.replace('<br>', '<br/>')
-            # Basic escaping for & if not part of an entity (simplistic approach)
-            # text = text.replace('&', '&amp;') # This might break existing entities if any
-            # A safer bet for this specific error is just fixing the br tag which is common in LLM markdown tables
             
             # Wrap text in Paragraph to allow wrapping in table cells
             try:
@@ -176,13 +180,22 @@ def create_pdf_download(df):
                 
         data.append(row_data)
     
-    # Calculate column widths (distribute evenly for now, or adjust based on content)
-    # Landscape letter is approx 792 points wide. Margins are usually 72 each side -> ~650 usable.
-    # With 9 columns, ~72 points per column.
-    col_width = 700 / len(df.columns) if len(df.columns) > 0 else 100
+    # Calculate column widths
+    # Calculate usable width
+    # A3 Landscape width is 420mm ~ 1190 points.
+    # Margins are 30+30 = 60 points.
+    usable_width = 1190 - 60 
+    
+    num_cols = len(df.columns)
+    if num_cols > 0:
+        # Distribute width evenly
+        col_width = usable_width / num_cols
+    else:
+        col_width = 100
     
     # Create Table
-    t = Table(data, colWidths=[col_width] * len(df.columns))
+    # repeatRows=1 repeats the header on new pages
+    t = Table(data, colWidths=[col_width] * num_cols, repeatRows=1)
     t.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
