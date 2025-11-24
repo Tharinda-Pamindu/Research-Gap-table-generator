@@ -133,56 +133,23 @@ def create_pdf_download(df):
     """
     Creates a PDF file from the DataFrame with text wrapping and landscape orientation.
     """
-    buffer = io.BytesIO()
-    # Use landscape orientation for wider tables
-    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
-    elements = []
+    # Calculate column widths
+    # Landscape letter is approx 792 points wide.
+    # Margins are usually 72 each side (default) -> ~648 usable width.
+    # We'll set specific margins to get more space.
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter), rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
     
-    styles = getSampleStyleSheet()
-    title_style = styles['Title']
-    normal_style = styles['Normal']
-    normal_style.fontSize = 8 # Smaller font for table content
+    usable_width = doc.width
+    num_cols = len(df.columns)
     
-    elements.append(Paragraph("Research Gap Analysis", title_style))
-    elements.append(Spacer(1, 12))
-    
-    # Convert DataFrame to list of lists, wrapping content in Paragraphs
-    data = []
-    
-    # Headers
-    headers = [Paragraph(f"<b>{col}</b>", normal_style) for col in df.columns]
-    data.append(headers)
-    
-    # Rows
-    for index, row in df.iterrows():
-        row_data = []
-        for item in row:
-            # Clean text for ReportLab Paragraph
-            text = str(item)
-            # Replace <br> with <br/> for ReportLab
-            text = text.replace('<br>', '<br/>')
-            # Basic escaping for & if not part of an entity (simplistic approach)
-            # text = text.replace('&', '&amp;') # This might break existing entities if any
-            # A safer bet for this specific error is just fixing the br tag which is common in LLM markdown tables
-            
-            # Wrap text in Paragraph to allow wrapping in table cells
-            try:
-                row_data.append(Paragraph(text, normal_style))
-            except:
-                # Fallback if parsing fails: strip tags and just show text
-                import re
-                clean_text = re.sub('<[^<]+?>', '', text)
-                row_data.append(Paragraph(clean_text, normal_style))
-                
-        data.append(row_data)
-    
-    # Calculate column widths (distribute evenly for now, or adjust based on content)
-    # Landscape letter is approx 792 points wide. Margins are usually 72 each side -> ~650 usable.
-    # With 9 columns, ~72 points per column.
-    col_width = 700 / len(df.columns) if len(df.columns) > 0 else 100
+    if num_cols > 0:
+        col_width = usable_width / num_cols
+    else:
+        col_width = usable_width
     
     # Create Table
-    t = Table(data, colWidths=[col_width] * len(df.columns))
+    # splitByRow=1 allows the table to split across pages
+    t = Table(data, colWidths=[col_width] * num_cols, repeatRows=1)
     t.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
