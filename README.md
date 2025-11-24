@@ -116,4 +116,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Developed with ❤️ by [Your Name/Team]**
+**Developed with ❤️ by [[Tharinda-Pamindu](https://github.com/Tharinda-Pamindu)]**
