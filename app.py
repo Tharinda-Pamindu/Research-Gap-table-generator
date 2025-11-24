@@ -116,9 +116,18 @@ def main():
 
     # Sidebar
     with st.sidebar:
-        # Enforce Dark Mode
-        apply_custom_css(True)
+        st.header("Settings")
         
+        # Theme Toggle (Fragment to prevent rerun)
+        @st.fragment
+        def theme_settings():
+            # Theme Toggle (Single Switch)
+            is_dark_mode = st.toggle("Dark Mode", value=True)
+            apply_custom_css(is_dark_mode)
+            
+        theme_settings()
+        
+        st.divider()
         st.header("Configuration")
         
         # Initialize Session State for API Key
