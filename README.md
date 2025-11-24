@@ -107,8 +107,9 @@ streamlit run app.py
 For detailed release notes, changelog, and upgrade guides, see **[RELEASES](RELEASES.md)**.
 
 ### Quick Overview
-*   **v2.0** - Literature Review Generator, IEEE Citations, Dual Mode Persistence
-*   **v1.0** - Initial Release with Gap Table Generation, Dark Mode, PDF Export Fix, Chat Persistence
+*   **v1.2.0** - Literature Review Generator, IEEE Citations, Dual Mode Persistence
+*   **v1.1.0** - Dark Mode, PDF Export Fix, Chat Persistence
+*   **v1.0.0** - Initial Release with Gap Table Generation
 
 ---
 
