@@ -134,8 +134,10 @@ def create_pdf_download(df):
     Creates a PDF file from the DataFrame with text wrapping and landscape orientation.
     """
     buffer = io.BytesIO()
-    # Use landscape orientation for wider tables
-    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
+    # Use A3 Landscape for more space (approx 1190 x 842 points)
+    # Margins: 30 points each side
+    from reportlab.lib.pagesizes import A3
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A3), rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
     elements = []
     
     styles = getSampleStyleSheet()
