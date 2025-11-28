@@ -58,6 +58,11 @@ def generate_research_gap_table(text, api_key):
     You are an expert academic researcher. Analyze the provided research paper text and identify the research gaps.
     Create a comprehensive table summarizing the findings.
     
+    CRITICAL INSTRUCTION:
+    - Analyze ONLY the uploaded research papers themselves (the papers whose full text is provided below)
+    - DO NOT create entries for papers that are merely cited/referenced within the uploaded papers
+    - Each row should represent ONE of the uploaded papers, not papers mentioned in their reference sections
+    
     The output MUST be a valid Markdown table with the following columns:
     | Reference | Year | Study Aim / Topic | Method / Approach | Data / Tools | Key Findings | Relevance to Project | Gaps / Notes | Research Gap / Limitations |
     
@@ -67,6 +72,7 @@ def generate_research_gap_table(text, api_key):
     - Ensure the table is well-formatted.
     - **Use IEEE Citation Style for the Reference column**: Format as "[1] Author(s), 'Title,' Journal/Conference, Year." Extract author names and titles from the text.
     - If author information is not available, use a descriptive reference like "[1] Study on [topic]".
+    - Create one row per uploaded paper (not per referenced paper).
     """
     
     response_text = get_gemini_response(prompt, text, api_key)
@@ -125,6 +131,101 @@ def answer_question(context, question, api_key):
     Answer:
     """
     return get_gemini_response(prompt, "", api_key)
+
+def validate_research_paper(text, api_key):
+    """
+    Validates if the provided text is likely a research paper.
+    Checks for key sections like Abstract, Introduction, References, etc.
+    """
+    # Use the first 2000 characters for validation to save tokens/time
+    sample_text = text[:2000]
+    
+    prompt = f"""
+    You are an academic document classifier. Analyze the following text sample from a document.
+    Determine if this is a valid research paper / academic article.
+    
+    Indicators of a research paper:
+    - Title and Author list
+    - Abstract
+    - Introduction
+    - Academic tone and structure
+    - Citations/References (though might be at the end)
+    
+    Text Sample:
+    {sample_text}
+    
+    Is this a research paper? Answer ONLY "YES" or "NO".
+    """
+    
+    response = get_gemini_response(prompt, "", api_key)
+    return "YES" in response.strip().upper()
+
+
+def generate_concise_table(df, api_key):
+    """
+    Generates a concise version of the research gap table by condensing content.
+    Combines Reference and Year columns, removes Gaps/Notes and Research Gap/Limitations columns.
+    """
+    # Convert DataFrame to markdown for AI processing
+    table_md = df.to_markdown(index=False)
+    
+    prompt = f"""
+    You are an expert academic researcher. Analyze the following research gap table and create a CONCISE version.
+    
+    Original Table:
+    {table_md}
+    
+    Instructions:
+    1. Create a table with these 6 columns ONLY: Reference (Year) | Study Aim / Topic | Method / Approach | Data / Tools | Key Findings | Relevance to Project
+    2. **Combine Reference and Year**: Format as "[1] Author(s), Year" in IEEE citation style (e.g., "[1] Smith et al., 2023")
+    3. **Remove these columns**: "Gaps / Notes" and "Research Gap / Limitations"
+    4. **Condense content**: Summarize each remaining column to 1-2 concise sentences maximum
+    5. **IEEE Citations**: Use numeric citations [1], [2], etc. in the Reference column
+    6. Maintain the same number of rows as the original table
+    
+    Output ONLY a valid Markdown table with the new structure. Do not add any explanatory text.
+    
+    Example format:
+    | Reference (Year) | Study Aim / Topic | Method / Approach | Data / Tools | Key Findings | Relevance to Project |
+    |------------------|-------------------|-------------------|--------------|--------------|----------------------|
+    | [1] Author et al., 2023 | Brief aim | Brief method | Brief tools | Brief findings | Brief relevance |
+    """
+    
+    response_text = get_gemini_response(prompt, "", api_key)
+    
+    # Parse the condensed table
+    try:
+        lines = response_text.strip().split('\n')
+        table_lines = [line.strip() for line in lines if '|' in line]
+        
+        if len(table_lines) < 2:
+            return df  # Return original if parsing fails
+        
+        headers = [h.strip() for h in table_lines[0].split('|') if h.strip()]
+        
+        data = []
+        for line in table_lines[1:]:
+            if '---' in line:
+                continue
+            row = [cell.strip() for cell in line.split('|') if cell.strip()]
+            if len(row) > 0:
+                if len(row) == len(headers):
+                    data.append(row)
+                elif len(row) > len(headers):
+                    data.append(row[:len(headers)])
+                else:
+                    row += [''] * (len(headers) - len(row))
+                    data.append(row)
+        
+        if not data:
+            return df  # Return original if no data
+        
+        concise_df = pd.DataFrame(data, columns=headers)
+        return concise_df
+    except Exception as e:
+        print(f"Error generating concise table: {e}")
+        return df  # Return original on error
+
 
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib import colors
