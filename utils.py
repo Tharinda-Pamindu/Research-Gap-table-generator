@@ -65,6 +65,8 @@ def generate_research_gap_table(text, api_key):
     - Do NOT include any introductory or concluding text.
     - Output ONLY the markdown table.
     - Ensure the table is well-formatted.
+    - **Use IEEE Citation Style for the Reference column**: Format as "[1] Author(s), 'Title,' Journal/Conference, Year." Extract author names and titles from the text.
+    - If author information is not available, use a descriptive reference like "[1] Study on [topic]".
     """
     
     response_text = get_gemini_response(prompt, text, api_key)
