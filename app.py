@@ -154,87 +154,178 @@ def main():
             st.success(f"{len(uploaded_files)} files uploaded.")
             
         st.divider()
-        st.header("Mode Selection")
-        mode = st.radio("Select Operation", ["Gap Table Generator", "Literature Review Generator"])
+        st.header("Analysis Options")
+        run_gap_analysis = st.checkbox("Generate Gap Table", value=True)
+        run_lit_review = st.checkbox("Generate Literature Review")
             
     # Main Content
     if uploaded_files and api_key:
+        # Initialize session state variables if not present
         if 'processed_data' not in st.session_state:
             st.session_state.processed_data = None
+        if 'concise_data' not in st.session_state:
+            st.session_state.concise_data = None
         if 'literature_review' not in st.session_state:
             st.session_state.literature_review = None
             
         # Process Button
         if st.button("Analyze Papers"):
-            with st.spinner("Extracting text and analyzing..."):
-                text, filenames = utils.extract_text_from_files(uploaded_files)
-                st.session_state.extracted_text = text
-                
-                if mode == "Gap Table Generator":
-                    # Generate Table
-                    df = utils.generate_research_gap_table(text, api_key)
-                    st.session_state.processed_data = df
-                else:
-                    # Generate Literature Review
-                    review = utils.generate_literature_review(text, api_key)
-                    st.session_state.literature_review = review
+            if not (run_gap_analysis or run_lit_review):
+                st.warning("Please select at least one analysis option.")
+            else:
+                with st.spinner("Analyzing documents..."):
+                    # Extract text once
+                    text, filenames = utils.extract_text_from_files(uploaded_files)
                     
-                st.success("Analysis Complete!")
+                    # Validate Document
+                    is_valid = utils.validate_research_paper(text, api_key)
+                    
+                    if not is_valid:
+                        st.error("Please upload relevant document. The uploaded file does not appear to be a research paper.")
+                    else:
+                        st.session_state.extracted_text = text
+                        
+                        # Run Gap Analysis
+                        if run_gap_analysis:
+                            status_msg = st.empty()
+                            status_msg.info("Generating Research Gap Table...")
+                            df = utils.generate_research_gap_table(text, api_key)
+                            st.session_state.processed_data = df
+                            status_msg.empty()
+                            
+                        # Run Literature Review
+                        if run_lit_review:
+                            status_msg = st.empty()
+                            status_msg.info("Generating Literature Review...")
+                            review = utils.generate_literature_review(text, api_key)
+                            st.session_state.literature_review = review
+                            status_msg.empty()
+                            
+                        st.success("Analysis Complete!")
 
-        # Display Results
-        if mode == "Gap Table Generator" and st.session_state.processed_data is not None:
-            st.subheader("🔍 Research Gap Analysis Table")
-            
-            # View Toggle using Tabs (prevents rerun)
-            tab1, tab2 = st.tabs(["Interactive Table", "Full Text Table"])
-            
-            with tab1:
-                st.dataframe(
-                    st.session_state.processed_data, 
-                    use_container_width=True, 
-                    hide_index=True
-                )
-                
-            with tab2:
-                st.markdown(st.session_state.processed_data.to_markdown(index=False))
-            
-            # Download Options
-            col1, col2 = st.columns(2)
-            with col1:
-                pdf_data = utils.create_pdf_download(st.session_state.processed_data)
-                st.download_button(
-                    label="Download as PDF",
-                    data=pdf_data,
-                    file_name="research_gap_analysis.pdf",
-                    mime="application/pdf"
-                )
-            with col2:
-                docx_data = utils.create_docx_download(st.session_state.processed_data)
-                st.download_button(
-                    label="Download as DOCX",
-                    data=docx_data,
-                    file_name="research_gap_analysis.docx",
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                )
+        # Display Results using Tabs
+        # Determine which tabs to show
+        tabs = []
+        tab_names = []
         
-        elif mode == "Literature Review Generator" and st.session_state.literature_review is not None:
-            st.subheader("📝 Literature Review")
-            st.markdown(st.session_state.literature_review)
+        if st.session_state.processed_data is not None:
+            tab_names.append("🔍 Gap Table")
+        
+        # Concise table is dependent on Gap Table, but we show the tab if Gap Table exists 
+        # to allow generation, or if concise data already exists.
+        if st.session_state.processed_data is not None:
+             tab_names.append("📋 Concise Table")
+             
+        if st.session_state.literature_review is not None:
+            tab_names.append("📝 Literature Review")
             
-            # Download Options
-            docx_data = utils.create_review_docx(st.session_state.literature_review)
-            st.download_button(
-                label="Download as DOCX",
-                data=docx_data,
-                file_name="literature_review.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            )
-            
-        if (mode == "Gap Table Generator" and st.session_state.processed_data is not None) or \
-           (mode == "Literature Review Generator" and st.session_state.literature_review is not None):
+        if tab_names:
             st.divider()
             
-            # Q&A Section
+            # Modern Navigation Menu Styling
+            st.markdown("""
+            <style>
+                /* Style the tab container */
+                .stTabs [data-baseweb="tab-list"] {
+                    gap: 10px;
+                    background-color: transparent;
+                    border-bottom: none;
+                }
+                
+                /* Style individual tabs */
+                .stTabs [data-baseweb="tab"] {
+                    height: 50px;
+                    white-space: pre-wrap;
+                    background-color: #262730;
+                    border-radius: 10px;
+                    color: #fafafa;
+                    font-weight: 600;
+                    padding: 0 20px;
+                    border: 1px solid #444;
+                    transition: all 0.3s ease;
+                }
+                
+                /* Hover effect */
+                .stTabs [data-baseweb="tab"]:hover {
+                    background-color: #333;
+                    border-color: #666;
+                    color: #ff4b4b;
+                }
+                
+                /* Active tab style */
+                .stTabs [aria-selected="true"] {
+                    background-color: #ff4b4b !important;
+                    color: white !important;
+                    border-color: #ff4b4b !important;
+                }
+                
+                /* Remove default focus outline */
+                .stTabs [data-baseweb="tab"]:focus {
+                    outline: none;
+                }
+            </style>
+            """, unsafe_allow_html=True)
+            
+            tabs = st.tabs(tab_names)
+            
+            # Iterate through tabs and render content based on name
+            for i, tab_name in enumerate(tab_names):
+                with tabs[i]:
+                    
+                    # --- GAP TABLE TAB ---
+                    if tab_name == "🔍 Gap Table":
+                        st.subheader("Research Gap Analysis Table")
+                        sub_tab1, sub_tab2 = st.tabs(["Interactive", "Full Text"])
+                        with sub_tab1:
+                            st.dataframe(st.session_state.processed_data, use_container_width=True, hide_index=True)
+                        with sub_tab2:
+                            st.markdown(st.session_state.processed_data.to_markdown(index=False))
+                            
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            pdf_data = utils.create_pdf_download(st.session_state.processed_data)
+                            st.download_button("Download PDF", pdf_data, "research_gap.pdf", "application/pdf")
+                        with col2:
+                            docx_data = utils.create_docx_download(st.session_state.processed_data)
+                            st.download_button("Download DOCX", docx_data, "research_gap.docx", "application/vnd.openxmlformats-officedocument.wordprocessingprocessingml.document")
+
+                    # --- CONCISE TABLE TAB ---
+                    elif tab_name == "📋 Concise Table":
+                        st.subheader("Concise Research Gap Table")
+                        
+                        # Generation Button (if not already generated or to regenerate)
+                        if st.button("✨ Generate Concise Table", key="gen_concise"):
+                            with st.spinner("Condensing table..."):
+                                concise_df = utils.generate_concise_table(st.session_state.processed_data, api_key)
+                                st.session_state.concise_data = concise_df
+                                st.rerun()
+                        
+                        if st.session_state.concise_data is not None:
+                            sub_tab3, sub_tab4 = st.tabs(["Interactive", "Full Text"])
+                            with sub_tab3:
+                                st.dataframe(st.session_state.concise_data, use_container_width=True, hide_index=True)
+                            with sub_tab4:
+                                st.markdown(st.session_state.concise_data.to_markdown(index=False))
+                                
+                            col3, col4 = st.columns(2)
+                            with col3:
+                                c_pdf = utils.create_pdf_download(st.session_state.concise_data)
+                                st.download_button("Download Concise PDF", c_pdf, "concise_gap.pdf", "application/pdf")
+                            with col4:
+                                c_docx = utils.create_docx_download(st.session_state.concise_data)
+                                st.download_button("Download Concise DOCX", c_docx, "concise_gap.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                        else:
+                            st.info("Click the button above to generate a concise version of the gap table.")
+
+                    # --- LITERATURE REVIEW TAB ---
+                    elif tab_name == "📝 Literature Review":
+                        st.subheader("Literature Review")
+                        st.markdown(st.session_state.literature_review)
+                        lr_docx = utils.create_review_docx(st.session_state.literature_review)
+                        st.download_button("Download Review DOCX", lr_docx, "literature_review.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+
+            # Q&A Section (Always visible if any analysis is done)
+            st.divider()
             st.subheader("💬 Ask Questions")
             
             # Initialize chat history if not present
